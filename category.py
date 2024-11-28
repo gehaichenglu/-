@@ -1,16 +1,18 @@
+"""Category module."""
 from task import Task
 
 class Category:
+    """Category class."""
     def __init__(self, id: int, name: str, tasks = [], timelines = []):
         self.id = id
         self.name = name
         # self.tasks = [
         #     Task(
-        #         tasks[i]["id"], 
-        #         {"id": id, "name": name}, 
-        #         tasks[i]["title"], 
-        #         tasks[i]["description"], 
-        #         tasks[i]["due_date"], 
+        #         tasks[i]["id"],
+        #         {"id": id, "name": name},
+        #         tasks[i]["title"],
+        #         tasks[i]["description"],
+        #         tasks[i]["due_date"],
         #         tasks[i]["reminder"],
         #         tasks[i]["tag"],
         #         tasks[i]["timeline_id"]
@@ -36,7 +38,7 @@ class Category:
     def name(self):
         """Get the name of the category."""
         return self._name
-    
+
     @name.setter
     def name(self, value):
         """Set the name of the category."""
@@ -44,7 +46,7 @@ class Category:
             raise ValueError("Category name cannot be empty.")
         elif len(value) > 50:
             raise ValueError("Category name cannot exceed 50 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Category name must be a string.")
         else:
             self._name = value
@@ -72,7 +74,7 @@ class Category:
     def get_tasks(self):
         """Get all tasks in the category."""
         return self.tasks
-    
+
     def to_dict(self) -> dict:
         """Convert the category to a dictionary."""
         return {

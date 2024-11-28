@@ -1,16 +1,17 @@
+"""Reminder module."""
 from datetime import datetime
 import threading
 
 def remind(reminder):
+    """Remind the user."""
     while not reminder.stop_flag:
         threading.Event().wait(0.5)
         if reminder.time <= datetime.now():
             reminder.trigger()
             break
-    
-
 
 class Reminder:
+    """Reminder class."""
     def __init__(self, time: datetime, message: str):
         if type(time) is datetime:
             self.time = time
@@ -26,7 +27,7 @@ class Reminder:
     def time(self):
         """Get the time of the reminder."""
         return self._time
-    
+
     @time.setter
     def time(self, value):
         """Set the time of the reminder."""
@@ -39,7 +40,7 @@ class Reminder:
     def message(self):
         """Get the message of the reminder."""
         return self._message
-    
+
     @message.setter
     def message(self, value):
         """Set the message of the reminder."""
@@ -53,16 +54,19 @@ class Reminder:
             self._message = value
 
     def schedule(self):
+        """Schedule the reminder."""
         print(f"Set Reminder for {self.time}: {self.message}")
         self.stop_flag = False
         self.thread = threading.Thread(target=remind, args=(self,))
         self.thread.start()
 
     def trigger(self):
+        """Trigger the reminder."""
         print(f"Reminder triggered at {self.time}. Message: {self.message}")
         # TODO: Implement more notification
 
     def to_dict(self) -> dict:
+        """Convert the reminder to a dictionary."""
         if self.time is None:
             return {
                 "time": None,

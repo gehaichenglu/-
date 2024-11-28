@@ -1,3 +1,4 @@
+"""User moduler"""
 from datetime import datetime
 from reminder import Reminder
 from category import Category
@@ -6,40 +7,46 @@ from task import Task
 
 
 class User:
+    """User class."""
     def __init__(self, id: int, username: str, password: str, timelines = [], categories = []):
         self.id = id
         self.username = username
         self.password = password
         from timeline import Timeline
-        self.timelines = [Timeline(i, self, timelines[i]["name"], timelines[i]["tasks"]) for i in range(len(timelines))]
-        self.categories = [Category(i, categories[i]["name"], categories[i]["tasks"], self.timelines) for i in range(len(categories))]
+        self.timelines = [Timeline(i, self, timelines[i]["name"], timelines[i]["tasks"])
+                        for i in range(len(timelines))]
+        self.categories = [Category(i, categories[i]["name"], categories[i]["tasks"],
+                                    self.timelines)
+                        for i in range(len(categories))]
 
     @property
     def username(self):
+        """Get the username of the user."""
         return self._username
-    
+
     @username.setter
     def username(self, value):
         if value == "":
             raise ValueError("Username cannot be empty.")
         elif len(value) > 16:
             raise ValueError("Username cannot exceed 16 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Username must be a string.")
         else:
             self._username = value
-    
+
     @property
     def password(self):
+        """Get the password of the user."""
         return self._password
-    
+
     @password.setter
     def password(self, value):
         if value == "":
             raise ValueError("Password cannot be empty.")
         elif len(value) > 16:
             raise ValueError("Password cannot exceed 16 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Password must be a string.")
         else:
             self._password = value
@@ -93,8 +100,9 @@ class User:
             self.timelines[i].display()
 
     def get_timelines(self):
+        """Get all timelines for the user."""
         return self.timelines
-    
+
     def add_category(self):
         """Add a category for the user."""
         while True:
@@ -110,7 +118,7 @@ class User:
                 break
             except ValueError as e:
                 print(e)
-    
+
     def rm_category(self):
         """Remove a category for the user."""
         for i in range(len(self.categories)):
@@ -133,7 +141,7 @@ class User:
                 if task.category.name == c.name :
                     task.category = Category(None, "Default")
         print(f"Category {c.name} removed for user: {self.username}")
-    
+
     def display_categories(self):
         """Display all categories for the user."""
         for i in range(len(self.categories)):
@@ -141,6 +149,7 @@ class User:
             self.categories[i].display()
 
     def to_dict(self):
+        """Convert the user to a dictionary."""
         return {
             "id": self.id,
             "username": self.username,

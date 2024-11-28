@@ -1,3 +1,4 @@
+"""Timeline class."""
 from datetime import datetime
 from reminder import Reminder
 from category import Category
@@ -6,19 +7,19 @@ from task import Task
 from user import User
 
 class Timeline:
-  
+    """Timeline class."""
     def __init__(self, id, user: User, name: str, tasks = []):
         self.id = id
         self.user = user
         self.name = name
         self.tasks = [
             Task(
-                i, 
-                tasks[i]["category"], 
-                tasks[i]["title"], 
-                tasks[i]["description"], 
-                tasks[i]["due_date"], 
-                tasks[i]["reminder"], 
+                i,
+                tasks[i]["category"],
+                tasks[i]["title"],
+                tasks[i]["description"],
+                tasks[i]["due_date"],
+                tasks[i]["reminder"],
                 tasks[i]["tags"],
                 self.name
                 )
@@ -27,36 +28,39 @@ class Timeline:
 
     @property
     def name(self):
+        """Get the name of the timeline."""
         return self._name
-    
+
     @name.setter
     def name(self, value):
         if value == "":
             raise ValueError("Timeline name cannot be empty.")
         elif len(value) > 25:
             raise ValueError("Timeline name cannot exceed 25 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Timeline name must be a string.")
         else:
             self._name = value
-    
+
     @property
     def user(self):
+        """Get the user of the timeline."""
         return self._user
-    
+
     @user.setter
     def user(self, value):
-        if type(value) is not User:
+        if isinstance(value, User) is False:
             raise ValueError("User must be a User object.")
         else:
             self._user = value
 
     def display(self):
+        """Display the timeline."""
         print(f"Timeline for user: {self.user.username}")
         for i in range(len(self.tasks)):
             print(f"Task id: {i}")
             print(self.tasks[i])
-        
+
     def add_task(self):
         """Add a task to the timeline."""
         while True:
@@ -70,18 +74,20 @@ class Timeline:
                 due_date = input("Enter task due date (YYYY-MM-DD HH:MM:SS) or [Enter] for back: ")
                 if due_date == "":
                     return
-                reminder_time = input("Enter reminder time (YYYY-MM-DD HH:MM:SS) or [Enter] for no reminder: ")
+                reminder_time = input(
+                    "Enter reminder time (YYYY-MM-DD HH:MM:SS) or [Enter] for no reminder: "
+                    )
                 reminder = None
                 if reminder_time != "":
                     reminder_message = input("Enter reminder message: ")
                     reminder = Reminder(time=reminder_time, message=reminder_message)
                 self.tasks.append(Task(
-                    len(self.tasks), 
-                    None, 
-                    title, 
-                    description, 
-                    due_date, 
-                    reminder, 
+                    len(self.tasks),
+                    None,
+                    title,
+                    description,
+                    due_date,
+                    reminder,
                     [],
                     self.name
                     ))
@@ -89,7 +95,7 @@ class Timeline:
                 break
             except ValueError as e:
                 print(e)
-    
+
     def rm_task(self, category):
         """Remove a task from the timeline."""
         print("Remove a task from the timeline.")
@@ -121,6 +127,7 @@ class Timeline:
 
 
     def to_dict(self) -> dict:
+        """Return a dictionary representation of the timeline."""
         #TODO: user
         return {
             "id": self.id,

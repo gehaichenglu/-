@@ -1,8 +1,10 @@
+"""Tag module."""
 from enum import Enum
 import re
 
 
 class Color(Enum):
+    """Color enum."""
     RED = "red"
     BLUE = "blue"
     GREEN = "green"
@@ -11,10 +13,11 @@ class Color(Enum):
     WHITE = "white"
 
 class Tag:
+    """Tag class."""
     def __init__(self, name: str, color: str):
         self.name = name
         self.color = color
-    
+
     @property
     def name(self):
         """Get the name of the tag."""
@@ -27,21 +30,19 @@ class Tag:
             raise ValueError("Tag name cannot be empty.")
         elif len(value) > 50:
             raise ValueError("Tag name cannot exceed 50 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Tag name must be a string.")
         else:
             self._name = value
-    
+
     @property
     def color(self):
         """Get the color of the tag."""
         return self._color
-    
+
     @color.setter
     def color(self, value):
         """Set the color of the tag."""
-
-        import re
 
         def is_valid_rgb(rgb_str):
             """Check if the RGB string is valid."""
@@ -52,14 +53,14 @@ class Tag:
                 return False
             rgb_values = re.findall(r'\d{1,3}', rgb_str)
             for value in rgb_values:
-                if not (0 <= int(value) <= 255):
+                if not 0 <= int(value) <= 255:
                     return False
             return True
         if value not in [color.value for color in Color] and not is_valid_rgb(value):
             raise ValueError("Invalid color.")
         else:
             self._color = value
-        
+
     def to_dict(self) -> dict:
         """Convert the tag to a dictionary."""
         return {

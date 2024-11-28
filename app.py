@@ -1,16 +1,18 @@
+"""APP module"""
 import json
+from datetime import datetime
 from category import Category
 from reminder import Reminder
 from tag import Tag
-from datetime import datetime
 from task import Task
 from user import User
 from timeline import Timeline
 
 class App:
+    """Main class for the app."""
     #TODO: implement the GUI for the app
-
     def run(self):
+        """Run the app."""
         print("Welcome!")
         print("Please login or register to continue.")
         print("1 for login. 2 for register.")
@@ -43,12 +45,10 @@ class App:
                 return self.login()
         print(f"User {username} logins successfully.")
         return self.convert_to_users(self.users[username])
-    
     def register(self):
         """Register a new user."""
         print("Register")
         users = self.users
-        
         username = input("Enter username or [Enter] for login: ")
         while username in users:
             print("Username already exists.")
@@ -63,7 +63,6 @@ class App:
         self.save()
         print(f"User {username} registers successfully.")
         return self.convert_to_users(self.users[username])
-    
     def loop(self):
         """Main loop for the app."""
         user = self.user
@@ -109,9 +108,8 @@ class App:
                 self.save()
             else:
                 break
-            
-    
     def timeline_loop(self, user, id):
+        """Loop for timeline."""
         t = user.timelines[id]
         print("Selected timeline:", t.name)
         t.display()
@@ -147,15 +145,14 @@ class App:
                         id = -1
                 if id != -1 and id != "":
                     self.task_loop(t, id, user)
-    
     def task_loop(self, timeline, id, user):
+        """Loop for task."""
         t = timeline.tasks[id]
         print(t)
         while True:
             print("1 for edit task. 2 for add tag.")
             print("3 for delete tag. 4 for back.")
             print("5 for cancel reminder. 6 for add to category.")
-            
             i = input()
             while i not in [str(x) for x in range(1, 7)]:
                 print(f"Invalid input. Please enter [1,7].")
@@ -179,7 +176,6 @@ class App:
             for task in timeline.tasks:
                 if task.reminder:
                     task.reminder.schedule()
-            
     def load(self):
         """Load users from file."""
         try:
@@ -189,7 +185,6 @@ class App:
             users = {}
         except json.decoder.JSONDecodeError:
             users = {}
-        
         return users
 
     def save(self):
@@ -197,12 +192,10 @@ class App:
         self.users[self.user.username] = self.user.to_dict()
         with open('data/users.json', 'w') as f:
             json.dump(self.users, f, indent=4)
-    
     def convert_to_users(self, user):
         """Convert dict to User objects."""
         return User(id=user["id"], username=user["username"], password=user["password"],
-                          timelines=user["timelines"], categories=user["categories"]) 
-                
+                          timelines=user["timelines"], categories=user["categories"])
 if __name__ == "__main__":
     app = App()
     app.run()

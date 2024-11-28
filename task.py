@@ -1,10 +1,11 @@
+"""Task module."""
 from datetime import datetime
 from reminder import Reminder
 from tag import Tag
-
 import re
 from tag import Color
 def extract_rgb_values(rgb_str):
+    """Extract and return the integer values of r, g, b from an RGB string."""
     if rgb_str == "red":
         return 255, 0, 0
     elif rgb_str == "green":
@@ -21,32 +22,32 @@ def extract_rgb_values(rgb_str):
     # 使用正则表达式提取数值部分
     pattern = r'rgb\((\s*\d{1,3}\s*,\s*){2}\s*\d{1,3}\s*\)'
     match = re.match(pattern, rgb_str)
-    
+
     if not match:
         raise ValueError("Invalid RGB string format")
-    
+
     # 提取数值
     rgb_values = re.findall(r'\d{1,3}', rgb_str)
-    
+
     # 转换为整数
     r = int(rgb_values[0])
     g = int(rgb_values[1])
     b = int(rgb_values[2])
-    
+
     # 检查数值范围
     if not (0 <= r <= 255 and 0 <= g <= 255 and 0 <= b <= 255):
         raise ValueError("RGB values must be between 0 and 255")
-    
     return r, g, b
 
 class Task:
+    """Task class."""
     def __init__(
             self,
-            id: int, 
-            category, 
-            title: str, 
-            description: str, 
-            due_date, 
+            id: int,
+            category,
+            title: str,
+            description: str,
+            due_date,
             reminder: Reminder,
             tag = [],
             timeline_name = None
@@ -59,22 +60,24 @@ class Task:
             self.category = Category(id=None, name="default")
         self.title = title
         self.description = description
-        if type(due_date) is datetime:
+        if isinstance(due_date, datetime):
             self.due_date = due_date
-        elif type(due_date) is str:
+        elif isinstance(due_date, str):
             self.due_date = datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S")
         else:
-            raise ValueError("Due date must be a datetime object or a string in %Y-%m-%d %H:%M:%S format.")
+            raise ValueError(
+                "Due date must be a datetime object or a string in %Y-%m-%d %H:%M:%S format."
+                )
         self.tags = [Tag(id=i, name=tag[i]["name"], color=tag[i]["color"]) for i in range(len(tag))]
-        if type(reminder) is Reminder:
+        if isinstance(reminder, Reminder):
             self.reminder = reminder
-        elif type(reminder) is dict:
+        elif isinstance(reminder, dict):
             self.reminder = Reminder(time=reminder["time"], message=reminder["message"])
         else:
             self.reminder = Reminder(time=None, message="No reminder set.")
         assert timeline_name is not None, "Timeline must be provided."
         self.timeline_name = timeline_name
-    
+
     def __str__(self):
         ret = f"""Task: {self.title}\n""" + \
                     f"""due_time:({self.due_date})\n""" + \
@@ -91,7 +94,7 @@ class Task:
     def title(self):
         """Get the title of the task."""
         return self._title
-    
+
     @title.setter
     def title(self, value):
         """Set the title of the task."""
@@ -99,7 +102,7 @@ class Task:
             raise ValueError("Title cannot be empty.")
         elif len(value) > 50:
             raise ValueError("Title cannot exceed 50 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Title must be a string.")
         else:
             self._title = value
@@ -108,13 +111,13 @@ class Task:
     def description(self):
         """Get the description of the task."""
         return self._description
-    
+
     @description.setter
     def description(self, value):
         """Set the description of the task."""
         if len(value) > 500:
             raise ValueError("Description cannot exceed 500 characters.")
-        elif type(value) is not str:
+        elif isinstance(value, str) is False:
             raise ValueError("Description must be a string.")
         else:
             self._description = value
@@ -123,11 +126,11 @@ class Task:
     def due_date(self):
         """Get the due date of the task."""
         return self._due_date
-    
+
     @due_date.setter
     def due_date(self, value):
         """Set the due date of the task."""
-        if type(value) is not datetime:
+        if isinstance(value, datetime) is False:
             raise ValueError("Due date must be a datetime object.")
         else:
             self._due_date = value
@@ -140,16 +143,18 @@ class Task:
     @reminder.setter
     def reminder(self, value):
         """Set the reminder of the task."""
-        if type(value) is not Reminder:
+        if isinstance(value, Reminder) is False:
             raise ValueError("Reminder must be a Reminder object.")
         else:
             self._reminder = value
 
     def set_due_date(self, date: datetime):
+        """Set the due date of the task."""
         self.due_date = date
         print(f"Due date updated to: {self.due_date}")
 
     def set_reminder(self, reminder: Reminder):
+        """Set a reminder for the task."""
         self.reminder = reminder
         print(f"Reminder set for task: {self.title}")
 
@@ -180,6 +185,7 @@ class Task:
                 print("Invalid input.")
 
     def edit(self):
+        """Edit the task."""
         try:
             title = input("Enter task title or [Enter] for continue: ")
             if title != "":
@@ -190,7 +196,9 @@ class Task:
             due_date = input("Enter task due date (YYYY-MM-DD HH:MM:SS) or [Enter] for continue: ")
             if due_date != "":
                 self.due_date = datetime.strptime(due_date, "%Y-%m-%d %H:%M:%S")
-            reminder_time = input("Enter reminder time (YYYY-MM-DD HH:MM:SS) or [Enter] for continue: ")
+            reminder_time = input(
+                "Enter reminder time (YYYY-MM-DD HH:MM:SS) or [Enter] for continue: "
+                )
             reminder = None
             if reminder_time != "":
                 reminder_message = input("Enter reminder message: ")
@@ -202,11 +210,13 @@ class Task:
             print(e)
 
     def cancel_reminder(self):
+        """Cancel the reminder of the task."""
         if self.reminder.time is not None:
             self.reminder.stop_flag = True
             self.reminder = Reminder(time=None, message="No reminder set.")
-        
+
     def add_to_category(self, category):
+        """Add the task to a category."""
         l = len(category)
         for i in range(l):
             print(f"Category id: {i}, name: {category[i].name}")
@@ -221,10 +231,10 @@ class Task:
                             if category[i].name == self.category.name:
                                 category[i].tasks.remove(self)
                                 break
-                    self.category = Category(id=category[category_id].id, name=category[category_id].name)
+                    self.category = Category(id=category[category_id].id,
+                                            name=category[category_id].name)
                     if self not in category[category_id].tasks:
                         category[category_id].tasks.append(self)
-                    
                     break
                 else:
                     print("Invalid category id.")
@@ -232,9 +242,11 @@ class Task:
                 print("Invalid input.")
 
     def get_tags(self):
+        """Get the tags of the task."""
         return self.tags
-    
+
     def to_dict(self) -> dict:
+        """Convert the task to a dictionary."""
         return {
             "id": self.id,
             "category": self.category.to_dict(),
